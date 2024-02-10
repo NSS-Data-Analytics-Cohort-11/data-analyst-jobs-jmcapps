@@ -49,14 +49,14 @@ ORDER BY avg_rating DESC;
 
 -- 7. Select unique job titles from the data_analyst_jobs table. How many are there?
 
-SELECT DISTINCT title
+SELECT COUNT(DISTINCT title)
 FROM data_analyst_jobs;
 
 --Answer: 881
 
 -- 8. How many unique job titles are there for California companies?
 
-SELECT DISTINCT title, location
+SELECT COUNT(DISTINCT title)
 FROM data_analyst_jobs
 WHERE location = 'CA';
 
@@ -81,7 +81,7 @@ AND company IS NOT NULL
 GROUP BY company
 ORDER BY AVG(star_rating) DESC;
 
---Answer: Unilever with an average rating of 4.2
+--Answer:  A six-way tie with Unilever, General Motors, Nike, American Express, Microsoft, and Kaiser Permanente with an average rating of 4.2
 
 -- 11. Find all the job titles that contain the word ‘Analyst’. How many different job titles are there?
 
@@ -102,14 +102,15 @@ AND title NOT ILIKE '%Analytics%';
 
 -- Bonus: You want to understand which jobs requiring SQL are hard to fill. Find the number of jobs by industry (domain) that require SQL and have been posted longer than 3 weeks.
 
-SELECT title, skill, days_since_posting, domain
-FROM data_analyst_jobs
-WHERE skill ILIKE '%SQL%'
-AND days_since_posting > 21
-AND domain IS NOT NULL
-ORDER BY days_since_posting DESC;
+SELECT domain AS industry, COUNT(*) AS num_sql_jobs
+FROM (SELECT *
+	  FROM data_analyst_jobs
+	  WHERE skill ILIKE '%SQL%' AND days_since_posting > 21) AS sql_jobs
+GROUP BY industry
+HAVING domain IS NOT NULL
+ORDER BY num_sql_jobs DESC;
 
--- ANSWER #1: 
+-- ANSWER #1: Internet and Software, Banks and Financial Services, Consulting and Business Services, and Health Care
 
--- ANSWER #2:
+-- ANSWER #2: 62, 61, 57, and 52
 
